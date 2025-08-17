@@ -26,7 +26,7 @@ const PokemonCard = ({ data }: { data: PokemonCardData }) => {
           <Text className="text-lg font-bold capitalize text-white">{data.name}</Text>
           <View className="mt-1 flex-row items-center justify-center">
             {data.types.map((type: PokemonTypeProperty, indexNum: number) => (
-              <TypePill type={type} key={indexNum} />
+              <TypePill type={type} key={indexNum} context={'card'} />
             ))}
           </View>
         </View>
