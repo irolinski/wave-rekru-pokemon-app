@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, Image, Text, View } from 'react-native';
+import PokemonCard from '~/components/PokemonCard';
 import { PokemonCardData } from '~/types';
 import { fetchPokemons } from '~/utils/pokeApi';
 
@@ -28,23 +29,18 @@ export default function Home() {
   return (
     <>
       <View className="flex-1 items-center justify-center p-6">
-        <FlatList
-          data={pokemonCardsData}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <View style={{ flexDirection: 'row', padding: 10, alignItems: 'center' }}>
-              <Image source={{ uri: item.sprite }} style={{ width: 50, height: 50 }} />
-              <View style={{ marginLeft: 10 }}>
-                <Text style={{ fontSize: 16, fontWeight: 'bold' }}>{item.name}</Text>
-                <Text>{item.types.join(', ')}</Text>
-              </View>
-            </View>
-          )}
-          onEndReached={loadMore} // fetch next 10 when scrolling
-          onEndReachedThreshold={0.5} // trigger when 50% from bottom
-          ListFooterComponent={isLoading ? <ActivityIndicator size="large" /> : null}
-        />
-        {/* <Link href="/modal">Open modal</Link> */}
+        <View className="w-full">
+          <FlatList
+            data={pokemonCardsData}
+            keyExtractor={(item) => item.id.toString()}
+            numColumns={2}
+            columnWrapperStyle={{ justifyContent: 'space-around' }}
+            renderItem={({ item }) => <PokemonCard data={item} />}
+            onEndReached={loadMore} // fetch next 10 when scrolling
+            onEndReachedThreshold={0.5} // trigger when 50% from bottom
+            ListFooterComponent={isLoading ? <ActivityIndicator size="large" /> : null}
+          />
+        </View>
       </View>
     </>
   );
