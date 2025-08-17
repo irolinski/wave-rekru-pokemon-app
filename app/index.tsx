@@ -2,33 +2,13 @@ import { useEffect, useState } from 'react';
 import { ActivityIndicator, FlatList, SafeAreaView, ScrollView, Text, View } from 'react-native';
 import PokemonCard from '~/components/PokemonCard';
 import TypePill from '~/components/TypePill';
+import { allTypes } from '~/constants/models/pokemons';
 import { typeColors } from '~/constants/styles/colors';
 import { SCREEN_HEIGHT } from '~/constants/styles/values';
 import { PokemonCardData, PokemonTypeProperty } from '~/types';
 import { fetchPokemons } from '~/utils/pokeApi';
 
 const NUM_OF_POKEMON_IN_SINGLE_FETCH_REQUEST_LIMIT = 10;
-
-const allTypes: PokemonTypeProperty[] = [
-  'normal',
-  'fire',
-  'water',
-  'electric',
-  'grass',
-  'ice',
-  'fighting',
-  'poison',
-  'ground',
-  'flying',
-  'psychic',
-  'bug',
-  'rock',
-  'ghost',
-  'dragon',
-  'dark',
-  'steel',
-  'fairy',
-];
 
 export default function Home() {
   const [pokemonCardsData, setPokemonCardsData] = useState<PokemonCardData[]>([]);
