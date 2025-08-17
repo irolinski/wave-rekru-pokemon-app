@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
-import {
-    ActivityIndicator, FlatList, SafeAreaView, ScrollView, Text, TouchableOpacity, View
-} from 'react-native';
+import { ActivityIndicator, FlatList, SafeAreaView, ScrollView, Text, View } from 'react-native';
 import PokemonCard from '~/components/PokemonCard';
 import TypePill from '~/components/TypePill';
 import { typeColors } from '~/constants/styles/colors';
+import { SCREEN_HEIGHT } from '~/constants/styles/values';
 import { PokemonCardData, PokemonTypeProperty } from '~/types';
 import { fetchPokemons } from '~/utils/pokeApi';
 
@@ -36,12 +35,18 @@ export default function Home() {
   const [offset, setOffset] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [selectedTypes, setSelectedTypes] = useState<PokemonTypeProperty[]>([]);
+  const [hasMore, setHasMore] = useState<boolean>(true);
 
   // Fetch next batch
   const loadMore = async () => {
-    if (isLoading) return;
+    if (isLoading || !hasMore) return; // stop if already loading or no more data
     setIsLoading(true);
     const newData = await fetchPokemons(offset, NUM_OF_POKEMON_IN_SINGLE_FETCH_REQUEST_LIMIT);
+
+    if (newData.length < NUM_OF_POKEMON_IN_SINGLE_FETCH_REQUEST_LIMIT) {
+      setHasMore(false); // no more data left
+    }
+
     setPokemonCardsData([...pokemonCardsData, ...newData]);
     setOffset(offset + NUM_OF_POKEMON_IN_SINGLE_FETCH_REQUEST_LIMIT);
     setIsLoading(false);
@@ -51,7 +56,7 @@ export default function Home() {
     loadMore();
   }, []);
 
-  // Filter Pokémon by selected types
+  // filter Pokémon by selected types
   const filteredPokemons =
     selectedTypes.length === 0
       ? pokemonCardsData
@@ -65,6 +70,7 @@ export default function Home() {
       <View className="w-full flex-row items-center justify-center py-8">
         <Text className="text-xl font-bold">Welcome to the PokeAPI App!</Text>
       </View>
+
       {/* Horizontal Type Filter */}
       <ScrollView
         horizontal
@@ -83,13 +89,10 @@ export default function Home() {
               context={'menu'}
               onPress={() => {
                 if (isSelected) {
-                  // deselect
                   setSelectedTypes(selectedTypes.filter((t) => t !== type));
                 } else if (selectedTypes.length < 2) {
-                  // select max 2
                   setSelectedTypes([...selectedTypes, type]);
                 } else {
-                  // replace the oldest selection
                   setSelectedTypes([selectedTypes[1], type]);
                 }
               }}
@@ -102,12 +105,13 @@ export default function Home() {
       <FlatList
         data={filteredPokemons}
         keyExtractor={(item) => item.id.toString()}
+        style={{ height: SCREEN_HEIGHT * 0.75 }}
         numColumns={2}
         columnWrapperStyle={{ justifyContent: 'space-around' }}
         renderItem={({ item }) => <PokemonCard data={item} />}
         onEndReached={loadMore}
         onEndReachedThreshold={0.5}
-        ListFooterComponent={isLoading ? <ActivityIndicator size="large" /> : null}
+        ListFooterComponent={isLoading && hasMore ? <ActivityIndicator size="large" /> : null} // only show loader if more data exists
       />
     </SafeAreaView>
   );
