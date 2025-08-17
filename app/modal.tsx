@@ -1,13 +1,17 @@
-import { StatusBar } from 'expo-status-bar';
-import { Platform } from 'react-native';
-
-import { ScreenContent } from '~/components/ScreenContent';
+import { StyleSheet, Text, View } from 'react-native';
 
 export default function Modal() {
   return (
-    <>
-      <ScreenContent path="app/modal.tsx" title="Modal"></ScreenContent>
-      <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
-    </>
+    <View style={styles.container}>
+      <Text>Modal screen</Text>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
